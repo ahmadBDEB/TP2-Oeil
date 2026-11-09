@@ -19,6 +19,7 @@ const vertexSource = `
 const fragmentSource = `
     precision mediump float;
     varying vec2 vPoint;
+    uniform vec2 uGaze;
 
     void main() {
         vec2 point = vPoint / 0.88;
@@ -34,7 +35,15 @@ const fragmentSource = `
         vec3 light = normalize(vec3(-0.5, 0.6, 0.7));
         float brightness = 0.3 + 0.7 * max(dot(normal, light), 0.0);
 
-        gl_FragColor = vec4(vec3(0.72, 0.57, 0.48) * brightness, 1.0);
+        vec3 gazeDirection = normalize(vec3(uGaze, 1.0));
+        float alignment = dot(normal, gazeDirection);
+        float irisMask = smoothstep(0.91, 0.92, alignment);
+
+        vec3 sclera = vec3(0.72, 0.57, 0.48);
+        vec3 iris = vec3(0.45, 0.04, 0.06);
+        vec3 color = mix(sclera, iris, irisMask);
+
+        gl_FragColor = vec4(color * brightness, 1.0);
     }
 `;
 
@@ -61,6 +70,8 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
 gl.useProgram(program);
 
+const gazeLocation = gl.getUniformLocation(program, "uGaze");
+
 const corners = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
 const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -81,6 +92,9 @@ window.addEventListener("pointermove", (event) => {
     const x = event.clientX - centerX
     const y = event.clientY - centerY
 
-    // quick check yk b4 adding eye
-    console.log(x, y)
+    // boom iris done
+    const scale = Math.max(bounds.width / 2, Math.hypot(x, y));
+
+    gl.uniform2f(gazeLocation, x / scale, -y / scale);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 })
