@@ -20,6 +20,7 @@ const fragmentSource = `
     precision mediump float;
     varying vec2 vPoint;
     uniform vec2 uGaze;
+    uniform sampler2D uIris;
 
     void main() {
         vec2 point = vPoint / 0.88;
@@ -49,12 +50,10 @@ const fragmentSource = `
         float radius = length(surface.xy);
 
         float irisMask = front * (1.0 - smoothstep(0.39, 0.42, radius));
-        float pupilMask = front * (1.0 - smoothstep(0.15, 0.17, radius));
-
+        vec2 irisUV = vec2(0.5) + surface.xy * vec2(0.45, -0.45) / 0.42;
+        vec3 iris = texture2D(uIris, irisUV).rgb;
         vec3 sclera = vec3(0.72, 0.57, 0.48);
-        vec3 iris = vec3(0.45, 0.04, 0.06);
         vec3 color = mix(sclera, iris, irisMask);
-        color = mix(color, vec3(0.02, 0.01, 0.01), pupilMask);
 
         gl_FragColor = vec4(color * brightness, 1.0);
     }
@@ -95,9 +94,24 @@ gl.enableVertexAttribArray(position);
 gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
 gl.viewport(0, 0, canvas.width, canvas.height);
-gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+async function loadTexture(source, unit, uniformName) {
+    const image = new Image();
+    image.src = source;
+    await image.decode();
 
-window.addEventListener("pointermove", (event) => {
+    const texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(gl.getUniformLocation(program, uniformName), unit);
+}
+
+function followPointer(event) {
+    window.addEventListener("pointermove", (event) => {
     const bounds = canvas.getBoundingClientRect();
     const centerX = bounds.left + bounds.width / 2;
     const centerY = bounds.top + bounds.height / 2;
@@ -111,3 +125,9 @@ window.addEventListener("pointermove", (event) => {
     gl.uniform2f(gazeLocation, x / scale, -y / scale);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 })
+}
+
+loadTexture(eyeTextures.iris, 0, "uIris").then(() => {
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    window.addEventListener("pointermove", followPointer);
+}).catch(console.error);
