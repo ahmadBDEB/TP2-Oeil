@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    user-select: none;
 }
 
 main {
@@ -9,8 +10,50 @@ main {
     align-items: center;
 }
 
+.eye-holder {
+    --eye-size: min(320px, 52vw, 58vh);
+    --spot: circle 125px at var(--light-x, 50%) var(--light-y, 50%);
+    position: relative;
+    background: radial-gradient(var(--spot), #34212a, #08070a);
+}
+
 canvas.eye {
-    width: 320px;
-    height: 320px;
-    outline: 1px dashed gray;
+    width: var(--eye-size);
+    height: auto;
+    outline: none;
+}
+
+.indice {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template: 1fr var(--eye-size) 1fr / 1fr var(--eye-size) 1fr;
+    place-items: center;
+    text-align: center;
+    color: #f4ddd3;
+    mask-image: radial-gradient(var(--spot), #000 35%, transparent);
+}
+
+.indice p:first-child {
+    grid-area: 2/1;
+}
+
+.indice p:nth-child(2) {
+    grid-area: 2/3;
+}
+
+.indice a {
+    grid-area: 3/2;
+    align-self: start;
+    color: inherit;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #a56b73;
+}
+
+.indice:focus-within {
+    mask-image: none;
+}
+
+@media (hover: none) {
+    .indice {mask-image: none;}
 }

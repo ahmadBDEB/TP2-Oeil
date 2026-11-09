@@ -1,11 +1,16 @@
 const canvas = document.querySelector(".eye");
+const scene = document.querySelector(".eye-holder");
+
+scene.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+});
 
 const gl = canvas.getContext("webgl");
 
 if (!gl) {
     throw new Error("boi webgl kinda sussy rn (plz add ptit message to go on a regular browser lol moment)")
 }
-// shaders for sphere
+
 const vertexSource = `
     attribute vec2 aPosition;
     varying vec2 vPoint;
@@ -150,6 +155,11 @@ function animateGaze(time) {
 }
 
 function followPointer(event) {
+    const sceneBounds = scene.getBoundingClientRect();
+
+    scene.style.setProperty("--light-x", `${event.clientX - sceneBounds.left}px`);
+    scene.style.setProperty("--light-y", `${event.clientY - sceneBounds.top}px`);
+
     const bounds = canvas.getBoundingClientRect();
     const x = event.clientX - (bounds.left + bounds.width / 2);
     const y = event.clientY - (bounds.top + bounds.height / 2);
