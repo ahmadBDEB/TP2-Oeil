@@ -21,6 +21,8 @@ const fragmentSource = `
     varying vec2 vPoint;
     uniform vec2 uGaze;
     uniform sampler2D uIris;
+    uniform sampler2D uSclera;
+    uniform sampler2D uVeins;
 
     void main() {
         vec2 point = vPoint / 0.88;
@@ -37,24 +39,30 @@ const fragmentSource = `
         float brightness = 0.3 + 0.7 * max(dot(normal, light), 0.0);
 
         vec3 forward = normalize(vec3(uGaze, 1.0));
-        vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
-        vec3 up = cross(forward, right);
+        float turn = length(uGaze);
+        vec2 direction = uGaze / max(turn, 0.0001);
+        float along = dot(normal.xy, direction);
+        float c = cos(turn);
+        float s = sin(turn);
 
-        vec3 surface = vec3(
-          dot(normal, right),
-          dot(normal, up),
-          dot(normal, forward)
-        );
+        vec2 rotatedXY = normal.xy + direction * ((c - 1.0) * along - s * normal.z);
+        vec3 surface = vec3(rotatedXY, s * along + c * normal.z);
 
         float front = step(0.0, surface.z);
         float radius = length(surface.xy);
-
         float irisMask = front * (1.0 - smoothstep(0.39, 0.42, radius));
+
         vec2 irisUV = vec2(0.5) + surface.xy * vec2(0.45, -0.45) / 0.42;
         vec3 iris = texture2D(uIris, irisUV).rgb;
-        vec3 sclera = vec3(0.72, 0.57, 0.48);
-        vec3 color = mix(sclera, iris, irisMask);
 
+        vec2 sphereUV = vec2(
+            0.5 + atan(surface.x, surface.z) / 6.283185,
+            acos(clamp(surface.y, -1.0, 1.0)) / 3.141593
+        );
+        vec3 sclera = texture2D(uSclera, sphereUV).rgb;
+        vec3 veins = texture2D(uVeins, sphereUV).rgb;
+
+        vec3 color = mix(sclera * veins, iris, irisMask);
         gl_FragColor = vec4(color * brightness, 1.0);
     }
 `;
@@ -110,24 +118,56 @@ async function loadTexture(source, unit, uniformName) {
     gl.uniform1i(gl.getUniformLocation(program, uniformName), unit);
 }
 
-function followPointer(event) {
-    window.addEventListener("pointermove", (event) => {
-    const bounds = canvas.getBoundingClientRect();
-    const centerX = bounds.left + bounds.width / 2;
-    const centerY = bounds.top + bounds.height / 2;
+let gazeX = 0, gazeY = 0;
+let targetX = 0, targetY = 0;
+let frame = null;
+let previousTime = 0;
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-    const x = event.clientX - centerX
-    const y = event.clientY - centerY
+function animateGaze(time) {
+    const elapsed = Math.max(0, time - previousTime);
+    const amount = reducedMotion.matches ? 1 : 1 - Math.exp(-elapsed / 48);
+    previousTime = time;
 
-    // boom iris done
-    const scale = Math.max(bounds.width / 2, Math.hypot(x, y));
+    gazeX += (targetX - gazeX) * amount;
+    gazeY += (targetY - gazeY) * amount;
 
-    gl.uniform2f(gazeLocation, x / scale, -y / scale);
+    if (Math.hypot(targetX - gazeX, targetY - gazeY) < 0.001) {
+        gazeX = targetX;
+        gazeY = targetY;
+        frame = null;
+    } else {
+        frame = requestAnimationFrame(animateGaze);
+    }
+
+    gl.uniform2f(gazeLocation, gazeX, gazeY);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-})
 }
 
-loadTexture(eyeTextures.iris, 0, "uIris").then(() => {
+function followPointer(event) {
+    const bounds = canvas.getBoundingClientRect();
+    const x = event.clientX - (bounds.left + bounds.width / 2);
+    const y = event.clientY - (bounds.top + bounds.height / 2);
+    const distance = Math.hypot(x, y);
+    const sensitivity = Math.min(
+        1.12 / (bounds.width * 0.82),
+        (Math.PI / 2) / (distance || 1)
+    );
+
+    targetX = x * sensitivity;
+    targetY = -y * sensitivity;
+
+    if (frame === null) {
+        previousTime = performance.now();
+        frame = requestAnimationFrame(animateGaze);
+    }
+}
+
+Promise.all([
+    loadTexture(eyeTextures.iris, 0, "uIris"),
+    loadTexture(eyeTextures.eyetexture, 1, "uSclera"),
+    loadTexture(eyeTextures.veins, 2, "uVeins")
+]).then(() => {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     window.addEventListener("pointermove", followPointer);
 }).catch(console.error);
