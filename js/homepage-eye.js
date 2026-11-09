@@ -35,13 +35,26 @@ const fragmentSource = `
         vec3 light = normalize(vec3(-0.5, 0.6, 0.7));
         float brightness = 0.3 + 0.7 * max(dot(normal, light), 0.0);
 
-        vec3 gazeDirection = normalize(vec3(uGaze, 1.0));
-        float alignment = dot(normal, gazeDirection);
-        float irisMask = smoothstep(0.91, 0.92, alignment);
+        vec3 forward = normalize(vec3(uGaze, 1.0));
+        vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
+        vec3 up = cross(forward, right);
+
+        vec3 surface = vec3(
+          dot(normal, right),
+          dot(normal, up),
+          dot(normal, forward)
+        );
+
+        float front = step(0.0, surface.z);
+        float radius = length(surface.xy);
+
+        float irisMask = front * (1.0 - smoothstep(0.39, 0.42, radius));
+        float pupilMask = front * (1.0 - smoothstep(0.15, 0.17, radius));
 
         vec3 sclera = vec3(0.72, 0.57, 0.48);
         vec3 iris = vec3(0.45, 0.04, 0.06);
         vec3 color = mix(sclera, iris, irisMask);
+        color = mix(color, vec3(0.02, 0.01, 0.01), pupilMask);
 
         gl_FragColor = vec4(color * brightness, 1.0);
     }
