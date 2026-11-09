@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+}
+
+main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas.eye {
+    width: 320px;
+    height: 320px;
+    outline: 1px dashed gray;
+}
