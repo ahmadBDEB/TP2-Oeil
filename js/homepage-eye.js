@@ -38,7 +38,6 @@ const fragmentSource = `
         vec3 light = normalize(vec3(-0.5, 0.6, 0.7));
         float brightness = 0.3 + 0.7 * max(dot(normal, light), 0.0);
 
-        vec3 forward = normalize(vec3(uGaze, 1.0));
         float turn = length(uGaze);
         vec2 direction = uGaze / max(turn, 0.0001);
         float along = dot(normal.xy, direction);
@@ -120,6 +119,12 @@ async function loadTexture(source, unit, uniformName) {
 
 let gazeX = 0, gazeY = 0;
 let targetX = 0, targetY = 0;
+
+function drawEye() {
+    gl.uniform2f(gazeLocation, gazeX, gazeY);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
 let frame = null;
 let previousTime = 0;
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -132,16 +137,16 @@ function animateGaze(time) {
     gazeX += (targetX - gazeX) * amount;
     gazeY += (targetY - gazeY) * amount;
 
-    if (Math.hypot(targetX - gazeX, targetY - gazeY) < 0.001) {
+    const settled = Math.hypot(targetX - gazeX, targetY - gazeY) < 0.001;
+
+    if (settled) {
         gazeX = targetX;
         gazeY = targetY;
-        frame = null;
-    } else {
-        frame = requestAnimationFrame(animateGaze);
     }
 
-    gl.uniform2f(gazeLocation, gazeX, gazeY);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    frame = settled ? null : requestAnimationFrame(animateGaze);
+
+    drawEye()
 }
 
 function followPointer(event) {
@@ -168,6 +173,6 @@ Promise.all([
     loadTexture(eyeTextures.eyetexture, 1, "uSclera"),
     loadTexture(eyeTextures.veins, 2, "uVeins")
 ]).then(() => {
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    drawEye()
     window.addEventListener("pointermove", followPointer);
 }).catch(console.error);
