@@ -18,7 +18,7 @@ function coneOutline(length, radius, depthRadius) {
         A ${depthRadius} ${radius} 0 1 1 ${joinX} ${joinY} Z`;
 }
 
-function createEyeLight(scene, beamEye, size = 1) {
+function createEyeLight(scene, beamEye, size = 1, { reach = 0, maxTurn = Math.PI / 2 } = {}) {
     const beam = scene.querySelector("#beam-shape");
     const beamFade = scene.querySelector("#beam-fade");
 
@@ -35,16 +35,16 @@ function createEyeLight(scene, beamEye, size = 1) {
         const dy = endY - startY;
         const distance = Math.hypot(dx, dy);
 
-        const turn = Math.min(Math.PI / 2, distance * 1.12 / (eyeBounds.width * 0.82));
+        const turn = Math.min(maxTurn, distance * 1.12 / (eyeBounds.width * 0.82));
         const eyeRadius = eyeBounds.width * 0.44;
         const pupilOffset = Math.min(distance, eyeRadius * Math.sin(turn));
         const offsetScale = pupilOffset / (distance || 1);
 
         const apexX = startX + dx * offsetScale;
         const apexY = startY + dy * offsetScale;
-        const beamLength = distance - pupilOffset;
+        const beamLength = distance - pupilOffset + reach;
         const radius = Math.min(75, 44 + distance * 0.12) * size;
-        const depthRadius = radius * Math.cos(turn);
+        const depthRadius = radius * Math.abs(Math.cos(turn));
         const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
         beam.setAttribute("d", coneOutline(beamLength, radius, depthRadius));
