@@ -2,16 +2,6 @@ html {
     background: #08070a;
 }
 
-.museum {
-    color: #f4ddd3;
-    text-align: center;
-    flex-direction: column;
-    gap: 2rem;
-    justify-content: flex-start;
-    padding: clamp(2rem, 8vh, 6rem) 1rem 2rem;
-    box-sizing: border-box;
-}
-
 body {
     margin: 0;
     user-select: none;
@@ -183,6 +173,67 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     left: 0;
     z-index: 4;
     pointer-events: none;
+}
+
+.exhibit-visual {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 1rem;
+    background: #0e0b10;
+}
+
+.case-beam {
+    position: absolute;
+    inset: 0;
+    filter: blur(7px);
+    pointer-events: none;
+}
+
+.case-beam::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(49% 0, 51% 0, 100% 100%, 0 100%);
+    background: linear-gradient(#e0b17c60, #c18a4c30 45%, transparent);
+}
+
+.museum-beam {
+    z-index: 5;
+}
+
+.museum-beam .beam-glow {
+    filter: blur(12.5px);
+}
+
+.museum::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: #08070af2;
+    mask-image: linear-gradient(#000, #000), url("#museum-lit");
+    mask-composite: subtract;
+}
+
+.museum {
+    color: #f4ddd3;
+    text-align: center;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: flex-start;
+    padding: clamp(2rem, 8vh, 6rem) 1rem 2rem;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.museum > header {
+    position: relative;
+    z-index: 4;
+}
+
+.museum:focus-within::after {
+    opacity: 0.2;
 }
 
 @media (hover: none) {

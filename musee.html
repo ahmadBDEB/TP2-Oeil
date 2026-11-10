@@ -13,12 +13,40 @@
     <script src="js/player-cursor.js" defer></script>
     <script src="js/eye-textures.js" defer></script>
     <script src="js/eye-renderer.js" defer></script>
+    <script src="js/eye-light.js" defer></script>
+    <script src="js/museum-lighting.js" defer></script>
     <script src="js/museum-eye.js" defer></script>
 
 </head>
 
 <body>
     <main class="museum page-fade">
+        <svg class="eye-beam museum-beam" aria-hidden="true">
+            <defs>
+                <filter id="soft-room-light" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                    <feGaussianBlur stdDeviation="8" />
+                </filter>
+
+                <mask id="museum-lit" maskUnits="userSpaceOnUse" mask-type="alpha" x="0" y="0" width="100%"
+                    height="100%">
+                    <g fill="white" filter="url(#soft-room-light)">
+                        <use href="#beam-shape" />
+                        <polygon class="case-cutout" />
+                        <polygon class="case-cutout" />
+                        <polygon class="case-cutout" />
+                    </g>
+                </mask>
+                <path id="beam-shape" />
+                <linearGradient id="beam-fade" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#c78e8a" stop-opacity="0.34" />
+                    <stop offset="0.55" stop-color="#c78e8a" stop-opacity="0.14" />
+                    <stop offset="1" stop-color="#c78e8a" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+            <g id="beam-light">
+                <use class="beam-glow" href="#beam-shape" fill="url(#beam-fade)" />
+            </g>
+        </svg>
         <canvas class="eye eye-small museum-eye" width="240" height="240" aria-hidden="true"></canvas>
         <header>
             <h1>musée de la vue</h1>
@@ -27,21 +55,27 @@
 
         <section class="exhibits" aria-label="Vitrines">
             <article class="exhibit">
-                <div class="exhibit-visual" aria-hidden="true"></div>
+                <div class="exhibit-visual" aria-hidden="true">
+                    <span class="case-beam"></span>
+                </div>
                 <p>vitrine 01</p>
                 <h2>le miroir fêlé</h2>
                 <p>retiré après qu’un visiteur a vu son reflet fermer les yeux avant lui.</p>
             </article>
 
             <article class="exhibit">
-                <div class="exhibit-visual" aria-hidden="true"></div>
+                <div class="exhibit-visual" aria-hidden="true">
+                    <span class="case-beam"></span>
+                </div>
                 <p>vitrine 02</p>
                 <h2>l’appareil photo</h2>
                 <p>la dernière photo vous montre devant cette vitrine. elle a été prise hier.</p>
             </article>
 
             <article class="exhibit">
-                <div class="exhibit-visual" aria-hidden="true"></div>
+                <div class="exhibit-visual" aria-hidden="true">
+                    <span class="case-beam"></span>
+                </div>
                 <p>vitrine 03</p>
                 <h2>la vitrine vide</h2>
                 <p>la prochaine pièce, c’est toi.</p>

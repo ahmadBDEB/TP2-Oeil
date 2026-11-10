@@ -1,6 +1,7 @@
 async function startMuseumEye() {
     const eye = document.querySelector(".museum-eye");
     const drawEye = await mountEye(eye);
+    const aimLight = createEyeLight(document.querySelector(".museum"), eye, 0.5);
     const gap = 150;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -39,6 +40,7 @@ async function startMuseumEye() {
         const gazeY = mouseY - y;
         const scale = (Math.PI / 2) / Math.max(gap, Math.hypot(gazeX, gazeY));
         drawEye(gazeX * scale, -gazeY * scale);
+        aimLight(mouseX, mouseY);
 
         frame = settled ? null : requestAnimationFrame(moveEye);
     }
