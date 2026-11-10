@@ -11,13 +11,19 @@
     <!-- SCRIPTS -->
 
     <script src="js/no-rightclick.js" defer></script>
+    <script src="js/eye-textures.js" defer></script>
+    <script src="js/eye-renderer.js" defer></script>
+    <script src="js/run.js" defer></script>
 
 </head>
 
 <body>
     <main class="run-room page-fade">
         <h1>cours</h1>
-        <div class="run-hall"></div>
+        <div class="run-hall">
+            <span class="run-player" aria-hidden="true"></span>
+            <canvas class="eye eye-small run-eye" width="160" height="160" aria-hidden="true"></canvas>
+        </div>
     </main>
 </body>
 

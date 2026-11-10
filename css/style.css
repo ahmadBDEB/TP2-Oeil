@@ -516,6 +516,53 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     background-size: 48px 48px;
 }
 
+.run-player,
+.run-eye {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.run-player {
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #eee5ec;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.run-obstacle {
+    position: absolute;
+    width: calc(100% / 3 - 4px);
+    height: 30px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(#71333e, #31171f);
+    border: 1px solid #9b5764;
+    pointer-events: none;
+}
+
+/* ENDING (ENDING.HTML) */
+
+.ending-room {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    box-sizing: border-box;
+    color: #cfaaa8;
+    text-align: center;
+}
+
+.ending-room h1,
+.ending-room p,
+.ending-room a {
+    margin: 0;
+}
+
+.ending-room a {
+    align-self: center;
+}
+
 @media (hover: none) {
     .indice {
         mask-image: none;
