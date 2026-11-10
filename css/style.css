@@ -343,7 +343,8 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     touch-action: none;
 }
 
-.stair-paths path:hover {
+.stair-paths path:hover,
+.maze-door:hover {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='7' fill='%23302e3c'/%3E%3C/svg%3E") 10 10, auto;
 }
 
@@ -353,10 +354,16 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
 
 .maze-door {
     position: absolute;
-    inset: 0;
+    inset: 3% 5.5% 55% 82.5%;
     z-index: 1;
-    clip-path: polygon(85.4% 11%, 91% 9.5%, 91% 33.3%, 85.4% 34%);
-    cursor: pointer;
+    margin: 0;
+    align-self: stretch;
+    padding: 0;
+    border: 0;
+}
+
+.stair-level:has(.maze-door:hover, .maze-door:focus-visible) .stair-player {
+    background-color: #234733;
 }
 
 .stair-routes {
@@ -392,6 +399,19 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     top: 92.1%;
     bottom: auto;
     transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.maze-room {
+    flex-direction: column;
+    gap: 1rem;
+    color: #cfaaa8;
+}
+
+.maze-board {
+    width: min(80vw, 70vh);
+    aspect-ratio: 1;
+    background: #121016;
+    border: 1px solid #55434e;
 }
 
 @media (hover: none) {
