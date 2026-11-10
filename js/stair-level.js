@@ -1,52 +1,74 @@
-const level = document.querySelector(".stair-level");
-const player = level.querySelector(".stair-player");
-let activeRoute;
-let climb;
+const player = document.querySelector(".stair-player");
+let route, length;
+let x = 720, y = 746;
+let progress = 0;
+let held = false;
+let frame = null;
+let lastTime;
 
-function chooseRoute(route) {
-    if (route === activeRoute || climb?.playState === "running") return;
-
-    climb?.cancel();
-    climb = null;
-    activeRoute = route;
-    player.style.left = `${route.offsetLeft + route.offsetWidth / 2}px`;
+function scheduleMove() {
+    if (frame !== null) return;
+    lastTime = performance.now();
+    frame = requestAnimationFrame(move);
 }
 
-function startClimb(route) {
-    chooseRoute(route);
-    if (route !== activeRoute) return;
+function selectRoute(path) {
+    if (held || route === path) return;
+    route = path;
+    length = path.getTotalLength();
+    progress = 0;
+    scheduleMove();
+}
 
-    if (!climb || climb.playState === "finished") {
-        const frames = Array.from({ length: 21 }, (_, step) => {
-            const progress = step / 20;
-            const hop = step % 2 ? 12 : 0;
-            const height = route.offsetHeight * progress + hop;
-            return {
-                transform: `translate(-50%, ${-height}px) rotate(${45 + progress * 720}deg)`
-            };
-        });
+function move(time) {
+    frame = null;
+    const elapsed = Math.min(time - lastTime, 50);
+    lastTime = time;
+    const start = route.getPointAtLength(0);
+    const approaching = progress === 0 && Math.hypot(x - start.x, y - start.y) > 1;
 
-        climb = player.animate(frames, { duration: 10_000, fill: "forwards" });
+    if (approaching) {
+        const amount = 1 - Math.exp(-elapsed / 75);
+        x += (start.x - x) * amount;
+        y += (start.y - y) * amount;
+    } else {
+        if (held) progress = Math.min(1, progress + elapsed / 10_000);
+        ({ x, y } = route.getPointAtLength(progress * length));
     }
 
-    climb.play();
+    player.style.left = `${x / 1440 * 100}%`;
+    player.style.top = `${y / 810 * 100}%`;
+    player.style.transform = `translate(-50%, -50%) rotate(${45 + progress * 720}deg)`;
+
+    if (held && progress === 1) {
+        const door = document.getElementById(route.dataset.door);
+        door.style.fill = door.id === "door-right" ? "#fff" : "#b01824";
+        if (door.id === "door-right") {
+            document.querySelector(".maze-door").hidden = false;
+        }
+        held = false;
+    }
+
+    if (approaching || held) frame = requestAnimationFrame(move);
 }
 
 function pauseClimb() {
-    if (climb?.playState === "running") climb.pause();
+    held = false;
 }
 
-for (const route of level.querySelectorAll(".stair-route")) {
-    route.addEventListener("pointerenter", () => chooseRoute(route));
-    route.addEventListener("focus", () => chooseRoute(route));
+for (const path of document.querySelectorAll(".stair-paths path")) {
+    path.addEventListener("pointerenter", () => selectRoute(path));
 
-    route.addEventListener("pointerdown", (event) => {
-        if (event.button !== 0) return;
-        route.setPointerCapture(event.pointerId);
-        startClimb(route);
+    path.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || held) return;
+        selectRoute(path);
+        if (progress === 1) return;
+        path.setPointerCapture(event.pointerId);
+        held = true;
+        scheduleMove();
     });
 
-    route.addEventListener("lostpointercapture", pauseClimb);
+    path.addEventListener("lostpointercapture", pauseClimb);
 }
 
 window.addEventListener("blur", pauseClimb);

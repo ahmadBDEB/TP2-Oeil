@@ -325,7 +325,8 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     height: auto;
 }
 
-.stair-doors {
+.stair-doors,
+.stair-paths {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -334,8 +335,28 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     fill: #050505;
 }
 
+.stair-paths path {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 160;
+    pointer-events: stroke;
+    touch-action: none;
+}
+
+.stair-paths path:hover {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='7' fill='%23302e3c'/%3E%3C/svg%3E") 10 10, auto;
+}
+
 .stair-art {
     position: relative;
+}
+
+.maze-door {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    clip-path: polygon(85.4% 11%, 91% 9.5%, 91% 33.3%, 85.4% 34%);
+    cursor: pointer;
 }
 
 .stair-routes {
@@ -368,8 +389,9 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
 }
 
 .stair-level .stair-player {
-    bottom: 18px;
-    transition: left 220ms ease-out;
+    top: 92.1%;
+    bottom: auto;
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 @media (hover: none) {
