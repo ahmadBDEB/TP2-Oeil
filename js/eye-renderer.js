@@ -27,8 +27,9 @@ const fragmentSource = `
 
         float z = sqrt(1.0 - radiusSquared);
         vec3 normal = vec3(point, z);
-        vec3 light = normalize(vec3(-0.5, 0.6, 0.7));
-        float brightness = 0.3 + 0.7 * max(dot(normal, light), 0.0);
+        vec3 light = normalize(vec3(-0.58, 0.72, 0.40));
+        float diffuse = max(dot(normal, light), 0.0);
+        vec3 illumination = vec3(0.067, 0.073, 0.092) + diffuse * vec3(0.58, 0.53, 0.48);
 
         float turn = length(uGaze);
         vec2 direction = uGaze / max(turn, 0.0001);
@@ -54,7 +55,7 @@ const fragmentSource = `
         vec3 veins = texture2D(uVeins, sphereUV).rgb;
 
         vec3 color = mix(sclera * veins, iris, irisMask);
-        gl_FragColor = vec4(color * brightness, 1.0);
+        gl_FragColor = vec4(color * illumination, 1.0);
     }
 `;
 
