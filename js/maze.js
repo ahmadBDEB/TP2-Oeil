@@ -40,11 +40,17 @@ maze[31][32] = "G";
 maze[32][31] = "G";
 maze[32][32] = "G";
 
-for (const row of maze) {
-    for (const cell of row) {
+for (const [y, row] of maze.entries()) {
+    for (const [x, cell] of row.entries()) {
         const tile = document.createElement("div");
         tile.className = "maze-tile";
-        if (cell === "#") tile.classList.add("maze-wall");
+        if (cell === "#") {
+            tile.classList.add("maze-wall");
+            const above = maze[y - 1]?.[x] ?? "#";
+            const below = maze[y + 1]?.[x] ?? "#";
+            if (above !== "#") tile.classList.add("maze-wall-rim");
+            if (below !== "#") tile.classList.add("maze-wall-face");
+        }
         if (cell === "S") tile.classList.add("maze-start");
         if (cell === "G") tile.classList.add("maze-goal");
         board.append(tile);
@@ -60,26 +66,31 @@ const aimMazeLight = createEyeLight(view, eye, 1.4, {
     maxTurn: mazeTurn,
 });
 
+let drawMazeEye;
+
+function aimAtPlayer() {
+    const target = player.getBoundingClientRect();
+    const source = eye.getBoundingClientRect();
+    const x = target.left + target.width / 2;
+    const y = target.top + target.height / 2;
+    const dx = x - (source.left + source.width / 2);
+    const dy = y - (source.top + source.height / 2);
+    const distance = Math.hypot(dx, dy);
+    const sensitivity = Math.min(
+        1.12 / (source.width * 0.82),
+        mazeTurn / (distance || 1)
+    );
+
+    drawMazeEye?.(dx * sensitivity, -dy * sensitivity);
+    aimMazeLight(x, y);
+}
+
+aimAtPlayer();
+window.addEventListener("resize", aimAtPlayer);
+
 mountEye(eye).then((drawEye) => {
-    function aimAtPlayer() {
-        const target = player.getBoundingClientRect();
-        const source = eye.getBoundingClientRect();
-        const x = target.left + target.width / 2;
-        const y = target.top + target.height / 2;
-        const dx = x - (source.left + source.width / 2);
-        const dy = y - (source.top + source.height / 2);
-        const distance = Math.hypot(dx, dy);
-        const sensitivity = Math.min(
-            1.12 / (source.width * 0.82),
-            (Math.PI / 2) / (distance || 1)
-        );
-
-        drawEye(dx * sensitivity, -dy * sensitivity);
-        aimMazeLight(x, y);
-    }
-
+    drawMazeEye = drawEye;
     aimAtPlayer();
-    window.addEventListener("resize", aimAtPlayer);
 }).catch(console.error);
 
 let playerX = 1.5;
@@ -89,6 +100,10 @@ let velocityY = 0;
 let pointer = null;
 let previousTime = 0;
 let movementFrame = null;
+
+const tilePixels = parseFloat(getComputedStyle(view).getPropertyValue("--tile"));
+let eyeLagX = 0;
+let eyeLagY = 0;
 
 function isOpen(x, y) {
     const tile = maze[Math.floor(y)]?.[Math.floor(x)];
@@ -116,6 +131,9 @@ function moveDiamond(time) {
     velocityX += ((pointer?.x ?? 0) * pull - velocityX) * ease;
     velocityY += ((pointer?.y ?? 0) * pull - velocityY) * ease;
 
+    const oldX = playerX;
+    const oldY = playerY;
+
     const nextX = playerX + velocityX * dt;
     if (canMoveTo(nextX, playerY)) playerX = nextX;
     else velocityX = 0;
@@ -127,7 +145,16 @@ function moveDiamond(time) {
     view.style.setProperty("--player-x", playerX);
     view.style.setProperty("--player-y", playerY);
 
-    if (speed > 0 || Math.hypot(velocityX, velocityY) > 0.02) {
+    const catchUp = Math.exp(-dt * 4);
+    eyeLagX = (eyeLagX - (playerX - oldX) * tilePixels) * catchUp;
+    eyeLagY = (eyeLagY - (playerY - oldY) * tilePixels) * catchUp;
+
+    eye.style.setProperty("--lag-x", `${eyeLagX}px`);
+    eye.style.setProperty("--lag-y", `${eyeLagY}px`);
+    aimAtPlayer();
+
+    if (speed > 0 || Math.hypot(velocityX, velocityY) > 0.02
+        || Math.hypot(eyeLagX, eyeLagY) > 0.5) {
         movementFrame = requestAnimationFrame(moveDiamond);
     }
 }

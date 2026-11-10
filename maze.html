@@ -30,9 +30,15 @@
                     <filter id="maze-soft-edge" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
                         <feGaussianBlur stdDeviation="7" />
                     </filter>
+                    <radialGradient id="maze-floor-light" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="88">
+                        <stop offset="0" stop-color="black" stop-opacity="0.95" />
+                        <stop offset="0.45" stop-color="black" stop-opacity="0.55" />
+                        <stop offset="1" stop-color="black" stop-opacity="0" />
+                    </radialGradient>
                     <mask id="maze-darkness" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
                         <rect width="100%" height="100%" fill="white" />
-                        <use href="#beam-shape" fill="black" filter="url(#maze-soft-edge)" />
+                        <use href="#beam-shape" fill="black" opacity="0.68" filter="url(#maze-soft-edge)" />
+                        <rect width="100%" height="100%" fill="url(#maze-floor-light)" />
                     </mask>
                     <linearGradient id="beam-fade" gradientUnits="userSpaceOnUse">
                         <stop offset="0" stop-color="#c78e8a" stop-opacity="0.34" />

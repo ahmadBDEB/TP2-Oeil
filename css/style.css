@@ -429,13 +429,14 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     top: 50%;
     width: calc(64 * var(--tile));
     height: calc(64 * var(--tile));
-    transform: translate(
-        calc(-1 * var(--player-x) * var(--tile)),
-        calc(-1 * var(--player-y) * var(--tile))
-    );
+    transform: translate(calc(-1 * var(--player-x) * var(--tile)),
+            calc(-1 * var(--player-y) * var(--tile)));
     display: grid;
     grid-template: repeat(64, 1fr) / repeat(64, 1fr);
-    background: #121016;
+    background: radial-gradient(circle farthest-corner at center,
+            #76616f 0%,
+            #403341 50%,
+            #121016 100%);
 }
 
 .maze-eye,
@@ -446,8 +447,8 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
 }
 
 .maze-eye {
-    left: calc(50% - 125px);
-    top: calc(50% - 70px);
+    left: calc(50% - 125px + var(--lag-x, 0px));
+    top: calc(50% - 70px + var(--lag-y, 0px));
     transform: translate(-50%, -50%);
 }
 
@@ -461,7 +462,18 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
 }
 
 .maze-wall {
-    background: #3d3545;
+    background: #443a49;
+    box-shadow:
+        inset 0 2px var(--wall-rim, transparent),
+        inset 0 -5px var(--wall-face, transparent);
+}
+
+.maze-wall-rim {
+    --wall-rim: #695966;
+}
+
+.maze-wall-face {
+    --wall-face: #29212d;
 }
 
 .maze-start {
