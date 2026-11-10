@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>la salle blanche</title>
 
     <link rel="stylesheet" href="css/style.css">
 
     <!-- SCRIPTS -->
 
-    <script src="js/scriptexanple.BOIwutdahell" defer></script>
+    <script src="js/eye-textures.js" defer></script>
+    <script src="js/eye-renderer.js" defer></script>
+    <script src="js/lookat-mouse.js" defer></script>
+    <script src="js/player-cursor.js" defer></script>
+
 </head>
-<body>
-    
+
+<body class="white-room-page">
+    <main class="white-room page-fade">
+        <header>
+            <h1>la salle blanche</h1>
+        </header>
+
+        <canvas class="eye eye-small look-at-mouse" width="160" height="160" aria-hidden="true"></canvas>
+        <canvas class="eye eye-medium look-at-mouse" width="320" height="320" aria-hidden="true"></canvas>
+        <canvas class="eye eye-small look-at-mouse" width="160" height="160" aria-hidden="true"></canvas>
+
+        <span class="stair-player" aria-hidden="true"></span>
+    </main>
 </body>
+
 </html>
