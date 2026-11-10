@@ -153,6 +153,12 @@ function moveDiamond(time) {
     eye.style.setProperty("--lag-y", `${eyeLagY}px`);
     aimAtPlayer();
 
+    if (maze[Math.floor(playerY)][Math.floor(playerX)] === "G") {
+        player.classList.add("maze-complete");
+        setTimeout(() => window.location.assign("run.html"), 500);
+        return;
+    }
+
     if (speed > 0 || Math.hypot(velocityX, velocityY) > 0.02
         || Math.hypot(eyeLagX, eyeLagY) > 0.5) {
         movementFrame = requestAnimationFrame(moveDiamond);
@@ -160,6 +166,7 @@ function moveDiamond(time) {
 }
 
 view.addEventListener("pointermove", (event) => {
+    if (player.classList.contains("maze-complete")) return;
     const bounds = view.getBoundingClientRect();
     pointer = {
         x: event.clientX - bounds.left - bounds.width / 2,
