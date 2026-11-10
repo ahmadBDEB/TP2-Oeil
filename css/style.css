@@ -119,6 +119,34 @@ canvas.eye {
     mask-image: none;
 }
 
+.has-player-cursor,
+.has-player-cursor * {
+    cursor: none;
+}
+
+.player-sprite {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+}
+
+.player-sprite::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid #e3c8ac;
+    box-shadow: 0 0 0 1px #08070a;
+    transform: rotate(45deg);
+}
+
+body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
+    background-color: #234733;
+}
+
 @media (hover: none) {
     .indice {
         mask-image: none;
