@@ -13,21 +13,38 @@
     <script src="js/eye-textures.js" defer></script>
     <script src="js/eye-renderer.js" defer></script>
     <script src="js/lookat-mouse.js" defer></script>
-    <script src="js/player-cursor.js" defer></script>
+    <script src="js/stair-level.js" defer></script>
 
 </head>
 
 <body class="white-room-page">
     <main class="white-room page-fade">
-        <header>
+        <header class="white-room-title">
             <h1>la salle blanche</h1>
+            <p>suit la lumiere.</p>
         </header>
 
-        <canvas class="eye eye-small look-at-mouse" width="160" height="160" aria-hidden="true"></canvas>
-        <canvas class="eye eye-medium look-at-mouse" width="320" height="320" aria-hidden="true"></canvas>
-        <canvas class="eye eye-small look-at-mouse" width="160" height="160" aria-hidden="true"></canvas>
+        <canvas class="eye eye-small eye-distant look-at-mouse" width="160" height="160" style="--x: 15%; --y: 31%;"
+            aria-hidden="true"></canvas>
+        <canvas class="eye eye-small eye-distant look-at-mouse" width="160" height="160" style="--x: 67%; --y: 24%;"
+            aria-hidden="true"></canvas>
+        <canvas class="eye eye-small eye-distant look-at-mouse" width="160" height="160" style="--x: 93%; --y: 54%;"
+            aria-hidden="true"></canvas>
+        <canvas class="eye eye-medium eye-near look-at-mouse" width="320" height="320" style="--x: 16%; --y: 67%;"
+            aria-hidden="true"></canvas>
+        <canvas class="eye eye-medium eye-near look-at-mouse" width="320" height="320" style="--x: 78%; --y: 57%;"
+            aria-hidden="true"></canvas>
 
-        <span class="stair-player" aria-hidden="true"></span>
+        <div class="stair-level">
+            <svg class="stair-doors" viewBox="0 0 1440 810" aria-hidden="true">
+                <polygon id="door-left" points="114,149 200,155 200,325 114,325" />
+                <polygon id="door-middle" points="668,51 774,51 774,201 668,201" />
+                <polygon id="door-right" points="1225,86 1315,72 1315,274 1225,279" />
+            </svg>
+            <img class="stair-art" src="img/whiteroom-stairs.webp" alt="Trois escaliers de pierre">
+            <span class="stair-player" aria-hidden="true"></span>
+        </div>
+        </div>
     </main>
 </body>
 
