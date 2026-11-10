@@ -4,33 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>musee de la vue</title>
+    <title>musée de la vue</title>
 
     <link rel="stylesheet" href="css/style.css">
 
     <!-- SCRIPTS -->
 
     <script src="js/player-cursor.js" defer></script>
+    <script src="js/eye-textures.js" defer></script>
+    <script src="js/eye-renderer.js" defer></script>
+    <script src="js/museum-eye.js" defer></script>
+
 </head>
 
 <body>
     <main class="museum page-fade">
+        <canvas class="eye eye-small museum-eye" width="240" height="240" aria-hidden="true"></canvas>
         <header>
-            <h1>museum de la vue</h1>
+            <h1>musée de la vue</h1>
             <p>le musée est fermé. les vitrines sont encore éclairées.</p>
         </header>
 
         <section class="exhibits" aria-label="Vitrines">
             <article class="exhibit">
+                <div class="exhibit-visual" aria-hidden="true"></div>
                 <p>vitrine 01</p>
                 <h2>le miroir fêlé</h2>
                 <p>retiré après qu’un visiteur a vu son reflet fermer les yeux avant lui.</p>
             </article>
 
             <article class="exhibit">
+                <div class="exhibit-visual" aria-hidden="true"></div>
                 <p>vitrine 02</p>
                 <h2>l’appareil photo</h2>
-                <p>la dernière photo vous montre devant cette vitrine. ele a été prise hier.</p>
+                <p>la dernière photo vous montre devant cette vitrine. elle a été prise hier.</p>
+            </article>
+
+            <article class="exhibit">
+                <div class="exhibit-visual" aria-hidden="true"></div>
+                <p>vitrine 03</p>
+                <h2>la vitrine vide</h2>
+                <p>la prochaine pièce, c’est toi.</p>
+                <a href="espace-blanc.html">continuer vers la salle blanche →</a>
             </article>
         </section>
     </main>

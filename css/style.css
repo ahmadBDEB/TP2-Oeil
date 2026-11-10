@@ -7,6 +7,9 @@ html {
     text-align: center;
     flex-direction: column;
     gap: 2rem;
+    justify-content: flex-start;
+    padding: clamp(2rem, 8vh, 6rem) 1rem 2rem;
+    box-sizing: border-box;
 }
 
 body {
@@ -116,7 +119,7 @@ canvas.eye {
     grid-area: 2/3;
 }
 
-.indice a {
+a {
     text-decoration: none;
     grid-area: 3/2;
     margin-top: 7rem;
@@ -167,10 +170,19 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
 }
 
 .exhibit {
-    flex: 0 1 18rem;
+    flex: 1 1 0;
+    min-width: 0;
     padding: 1.25rem;
     border: 1px solid #4e363e;
     background: #151015;
+}
+
+.museum-eye {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    pointer-events: none;
 }
 
 @media (hover: none) {
@@ -179,13 +191,22 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     }
 }
 
-@keyframes page-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@media (max-width: 720px) {
+    .exhibit { flex-basis: 16rem; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
     .page-fade {
         animation: page-in 450ms ease-out both;
+    }
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
