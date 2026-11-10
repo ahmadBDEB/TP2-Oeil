@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,31 @@
 
     <!-- SCRIPTS -->
     <script src="js/eye-textures.js" defer></script>
-    <script src="js/homepage-eye.js" defer></script>
+    <script src="js/eye-renderer.js" defer></script>
+    <script src="js/lookat-mouse.js" defer></script>
+    <script src="js/no-rightclick.js" defer></script>
+    <script src="js/eye-light.js" defer></script>
+
 </head>
+
 <body>
     <main class="eye-holder">
-        <canvas class="eye" width="320" height="320"></canvas>
+        <svg class="eye-beam" aria-hidden="true">
+            <defs>
+                <polygon id="beam-shape"></polygon>
+                <mask id="beam-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                    <use href="#beam-shape" fill="white"></use>
+                </mask>
+                <linearGradient id="beam-fade" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#c78e8a" stop-opacity="0.34" />
+                    <stop offset="0.55" stop-color="#c78e8a" stop-opacity="0.14" />
+                    <stop offset="1" stop-color="#c78e8a" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+
+            <use class="beam-glow" href="#beam-shape" fill="url(#beam-fade)" />
+        </svg>
+        <canvas class="eye look-at-mouse eye-large" width="320" height="320"></canvas>
         <div class="indice">
             <p>test</p>
             <p>test 2</p>
@@ -21,4 +42,5 @@
         </div>
     </main>
 </body>
+
 </html>

@@ -12,15 +12,39 @@ main {
 
 .eye-holder {
     --eye-size: min(320px, 52vw, 58vh);
-    --spot: circle 125px at var(--light-x, 50%) var(--light-y, 50%);
     position: relative;
-    background: radial-gradient(var(--spot), #34212a, #08070a);
+    background: #08070a;
 }
 
 canvas.eye {
     width: var(--eye-size);
     height: auto;
     outline: none;
+}
+
+.eye-small {
+    --eye-size: 80px;
+}
+
+.eye-medium {
+    --eye-size: 160px;
+}
+
+.eye-large {
+    --eye-size: 320px;
+}
+
+.eye-beam {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.beam-glow {
+    filter: blur(25px);
 }
 
 .indice {
@@ -31,7 +55,8 @@ canvas.eye {
     place-items: center;
     text-align: center;
     color: #f4ddd3;
-    mask-image: radial-gradient(var(--spot), #000 35%, transparent);
+    z-index: 2;
+    mask-image: url("#beam-mask");
 }
 
 .indice p:first-child {
@@ -55,5 +80,7 @@ canvas.eye {
 }
 
 @media (hover: none) {
-    .indice {mask-image: none;}
+    .indice {
+        mask-image: none;
+    }
 }
