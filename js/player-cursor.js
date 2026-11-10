@@ -54,5 +54,10 @@ function enablePlayerCursor(sprite) {
     window.addEventListener("blur", hidePlayer);
 }
 
-const playerSprite = document.querySelector(".player-sprite");
-if (playerSprite) enablePlayerCursor(playerSprite);
+const playerSprite = document.createElement("span");
+playerSprite.className = "player-sprite";
+playerSprite.setAttribute("aria-hidden", "true");
+playerSprite.hidden = true;
+document.body.append(playerSprite);
+
+enablePlayerCursor(playerSprite);

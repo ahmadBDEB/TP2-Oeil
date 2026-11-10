@@ -1,3 +1,14 @@
+html {
+    background: #08070a;
+}
+
+.museum {
+    color: #f4ddd3;
+    text-align: center;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 body {
     margin: 0;
     user-select: none;
@@ -147,8 +158,34 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     background-color: #234733;
 }
 
+.exhibits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: min(60rem, calc(100% - 2rem));
+}
+
+.exhibit {
+    flex: 0 1 18rem;
+    padding: 1.25rem;
+    border: 1px solid #4e363e;
+    background: #151015;
+}
+
 @media (hover: none) {
     .indice {
         mask-image: none;
+    }
+}
+
+@keyframes page-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .page-fade {
+        animation: page-in 450ms ease-out both;
     }
 }
