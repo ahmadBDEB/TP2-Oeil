@@ -10,6 +10,14 @@ main {
     align-items: center;
 }
 
+.home-intro {
+    position: absolute;
+    inset: 1rem 0 auto;
+    z-index: 3;
+    text-align: center;
+    color: #cfaaa8;
+}
+
 .eye-holder {
     --eye-size: min(320px, 52vw, 58vh);
     position: relative;
@@ -77,6 +85,7 @@ canvas.eye {
 }
 
 .indice {
+    font-size: clamp(1rem, 2vw, 1.1rem);
     position: absolute;
     inset: 0;
     display: grid;
@@ -97,7 +106,9 @@ canvas.eye {
 }
 
 .indice a {
+    text-decoration: none;
     grid-area: 3/2;
+    margin-top: 7rem;
     align-self: start;
     color: inherit;
     padding: 0.4rem 0.6rem;
