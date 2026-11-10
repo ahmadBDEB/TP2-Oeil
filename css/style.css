@@ -216,6 +216,14 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     mask-composite: subtract;
 }
 
+.exhibit-visual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .museum {
     color: #f4ddd3;
     text-align: center;

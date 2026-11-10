@@ -1,5 +1,3 @@
-const scene = document.querySelector(".eye-holder");
-
-scene.addEventListener("contextmenu", (event) => {
+document.addEventListener("contextmenu", (event) => {
     event.preventDefault();
 });
