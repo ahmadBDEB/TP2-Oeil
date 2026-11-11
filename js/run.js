@@ -1,6 +1,7 @@
 const hall = document.querySelector(".run-hall");
 const runner = hall.querySelector(".run-player");
 const chaser = hall.querySelector(".run-eye");
+const aimRunLight = createEyeLight(hall, chaser, 1.1, { reach: 100 });
 const keys = new Set();
 const controls = ["w", "a", "s", "d", "arrowup", "arrowleft", "arrowdown", "arrowright"];
 
@@ -16,6 +17,8 @@ const obstacles = [];
 let started = false;
 let runTime = 0;
 let nextWave = 0.8;
+const runDuration = 30;
+const countdown = document.querySelector(".run-countdown");
 
 mountEye(chaser).then((drawEye) => {
     drawChaser = drawEye;
@@ -31,6 +34,8 @@ window.addEventListener("keydown", (event) => {
 
 function moveObstacles(dt) {
     runTime += dt;
+    const remaining = `${Math.max(0, Math.ceil(runDuration - runTime))} s`;
+    if (countdown.textContent !== remaining) countdown.textContent = remaining;
 
     if (runTime >= nextWave) {
         const openLane = Math.floor(Math.random() * 3);
@@ -107,6 +112,8 @@ function moveRunner(time) {
 
     const gazeScale = Math.min(1 / 100, 1.25 / (Math.hypot(x - eyeX, y - eyeY) || 1));
     drawChaser?.((x - eyeX) * gazeScale, (eyeY - y) * gazeScale);
+    const bounds = hall.getBoundingClientRect();
+    aimRunLight(bounds.left + x, bounds.top + y);
 
     requestAnimationFrame(moveRunner);
 
@@ -115,7 +122,7 @@ function moveRunner(time) {
         return;
     }
 
-    if (runTime >= 30) {
+    if (runTime >= runDuration) {
         window.location.assign("ending.html");
         return;
     }

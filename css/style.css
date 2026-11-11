@@ -374,34 +374,7 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     background-color: #234733;
 }
 
-.stair-routes {
-    display: flex;
-    gap: 1rem;
-}
 
-.stair-route {
-    flex: 1;
-    position: relative;
-    isolation: isolate;
-    height: clamp(120px, 28vh, 220px);
-    border: 0;
-    background: transparent;
-    touch-action: none;
-}
-
-.stair-route::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    clip-path: polygon(36% 0, 64% 0, 100% 100%, 0 100%);
-    background: repeating-linear-gradient(to top, #777e92 0 2px, #d4d7e1 2px 14px, #ebedf2 14px 18px);
-}
-
-.stair-floor {
-    height: 12px;
-    background: linear-gradient(#eeedf2, #85899d);
-}
 
 .stair-level .stair-player {
     top: 92.1%;
@@ -508,12 +481,20 @@ body:has(a[href]:hover, button:enabled:hover) .player-sprite::before {
     width: min(85vw, 320px);
     height: min(72vh, 600px);
     overflow: hidden;
-    border: 1px solid #69545c;
+    border: 0px solid #69545c;
     background-color: #160e13;
     background-image:
         linear-gradient(to right, #392830 1px, transparent 1px),
         linear-gradient(to bottom, #392830 1px, transparent 1px);
     background-size: 48px 48px;
+}
+
+.run-hall .eye-beam {
+    z-index: 2;
+}
+
+.run-eye {
+    z-index: 3;
 }
 
 .run-player,
